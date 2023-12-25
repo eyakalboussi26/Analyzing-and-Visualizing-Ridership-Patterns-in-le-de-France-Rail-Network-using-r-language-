@@ -1,0 +1,268 @@
+---
+title: 'Data collection,cleaning,Visualization 2017'
+author: "eya kalboussi"
+date: "2023-12-25"
+output: html_document
+---
+
+### 1. Import Data
+
+```{r}
+##  Load the 2017 data
+NbValidS1 <- read.delim("/cloud/project/Data2017/NbValidS1.txt")
+NbValidS2 <- read.delim("/cloud/project/Data2017/NbValidS2.txt")
+ProfilFerS1 <- read.delim("/cloud/project/Data2017/ProfilFerS1.txt", header=FALSE)
+ProfilFerS2 <- read.delim2("/cloud/project/Data2017/ProfilFerS2.txt", header=FALSE)
+
+
+```
+
+### 2. Data Exploration: understanding the data, exploring its distribution, and identifying potential
+
+##### A. "NbValidS1" Data set:
+
+```{r}
+head(NbValidS1)
+```
+
+```{r}
+str(NbValidS1)
+```
+
+```{r}
+summary(NbValidS1)
+```
+
+```{r}
+dim(NbValidS1)
+
+```
+
+### 3. Data cleaning : The data cleaning process involves, first and foremost, handling missing values, outliers, and any inconsistencies
+
+```{r}
+# Display rows with missing values before deletion
+rows_with_missing_before <- which(rowSums(is.na(NbValidS1) | NbValidS1 == "inconnu" | NbValidS1 == "?" | NbValidS1 == "NA" | NbValidS1 == "ND" | NbValidS1 == "0" | NbValidS1 == "") > 0)
+cat("Number of rows with missing values before deletion:", length(rows_with_missing_before), "\n")
+cat("Rows with missing values before deletion:\n")
+print(NbValidS1[rows_with_missing_before, ])
+
+```
+
+```{r}
+# Load the dplyr library
+library(dplyr)
+
+# Convert specific values to NA using dplyr
+NbValidS1_cleaned <- NbValidS1 %>%
+  mutate_all(~ifelse(. %in% c("inconnu", "?", "NA", "ND", "0", "", "NON DEFINI"), NA, .)) %>%
+  na.omit()
+
+# Display the new version of the cleaned dataset
+print(NbValidS1_cleaned)
+
+
+```
+
+```{r}
+dim(NbValidS1_cleaned)
+```
+
+Discussion:
+
+Initially, the dataset **"NbValidS1"**dimension is 780270. We detected that there are 3578 rows containing missing values. We removed them and rechecked the data dimension, which is now 776627.
+
+### **4. Data analysis**
+
+A. Temporal Trends : Distribution of Validations per Day (Jour):
+
+```{r}
+# Extract a subset of NbValidS1_cleaned for the row with the maximum value,including the columns 'JOUR', 'NB_VALD', and 'LIBELLE_ARRET'
+result <- NbValidS1_cleaned[which.max(NbValidS1_cleaned$NB_VALD), c("JOUR", "NB_VALD")]
+#display the resultat
+print(result)
+
+```
+
+B. Spatial distribution : Distribution of Validations per Bus Stop and type of ticket (LIBELLE_ARRET et CATEGORIE_TITRE°:
+
+```{r}
+# Extract a subset of NbValidS1_cleaned for the row with the maximum value,including the columns 'JOUR', 'NB_VALD', and 'LIBELLE_ARRET'
+result <- NbValidS1_cleaned[which.max(NbValidS1_cleaned$NB_VALD), c("LIBELLE_ARRET", "NB_VALD","CATEGORIE_TITRE")]
+#display the resultat
+print(result)
+
+
+```
+
+```{r}
+# Remplacez "NbValidS1_cleaned" par le nom réel de votre jeu de données
+top_2_categories <- NbValidS1_cleaned %>%
+  arrange(desc(NB_VALD)) %>%
+  slice_head(n = 2)
+
+# Affichage des deux lignes représentant les catégories de titres avec les valeurs de validations les plus élevées
+print(top_2_categories)
+
+# Enregistrement des deux lignes dans un fichier CSV
+write.csv(top_2_categories, "top_2_categories_data.csv", row.names = FALSE)
+
+
+```
+
+```{r}
+library(ggplot2)
+# Creating a graph representing the distribution of ticket categories by number of validations for these two lines
+transport_ticket_validations_dist_S1 <- ggplot(NbValidS1_cleaned, aes(x = CATEGORIE_TITRE, y = NB_VALD, fill = CATEGORIE_TITRE)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Category of Ticket", y = "Number of Validations", title = "Distribution of validations for Ticket Transport category") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Displaying the graph
+print(transport_ticket_validations_dist_S1)
+
+# Save the graph with the file extension (e.g., ".png", ".jpg")
+ggsave("transport_ticket_validations_dist_S1.png", transport_ticket_validations_dist_S1, width = 10, height = 6, units = "in")
+
+```
+
+### Conclusion:
+
+During the first semester of 2017, starting in January and ending in June, our graphical analyses revealed that Navigo had the highest number of validations among all transportation passes. We can conclude that during this period, Navigo was the best-selling ticket. Additionally, the stations recording the highest number of validations were La Défense - Grande Arche. It can be inferred that users likely have a profile of professionals, given that La Défense is the heart of Paris's economic activity.Following Navigo, the transportation passes Imagine R and TST were also notable
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+##### **B. "NbValidS2" Data set:**
+
+```{r}
+dim(NbValidS2)
+```
+
+```{r}
+# Search for missing values in all columns
+rows_with_missing_before <- which(rowSums(is.na(NbValidS2) | NbValidS2 == "inconnu" | NbValidS2 == "?" | NbValidS2 == "NA" | NbValidS2 == "NON DEFINI" | NbValidS2 == "ND" | NbValidS2 == "0" | NbValidS2 == "") > 0)
+
+# Display the number of rows with missing values before deletion
+cat("Number of rows with missing values before deletion:", length(rows_with_missing_before), "\n")
+
+# Display the rows with missing values before deletion
+cat("Rows with missing values before deletion:\n")
+print(NbValidS2[rows_with_missing_before, ])
+
+
+```
+
+```{r}
+# Load the dplyr library
+library(dplyr)
+
+# Convert specific values to NA using dplyr
+NbValidS2_cleaned <- NbValidS2 %>%
+  mutate_all(~ifelse(. %in% c("inconnu", "?", "NA", "ND", "0", "", "NON DEFINI"), NA, .)) %>%
+  na.omit()
+
+# Display the new version of the cleaned dataset
+print(NbValidS2_cleaned)
+
+
+
+```
+
+Initially, the dataset **"NbValidS2"**dimension is 825698 . We detected that there are 121647 rows containing missing values. We removed them and rechecked the data dimension, which is now 704051.
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+##### C. "ProfilFerS1" Data set:
+
+```{r}
+dim(ProfilFerS1)
+```
+
+```{r}
+# Search for missing values in all columns
+rows_with_missing_before <- which(rowSums(is.na(ProfilFerS1) | ProfilFerS1 == "inconnu" | ProfilFerS1 == "?" | ProfilFerS1 == "NA" | ProfilFerS1 == "NON DEFINI" | ProfilFerS1 == "ND" | ProfilFerS1 == "0" | ProfilFerS1 == "") > 0)
+
+# Display the number of rows with missing values before deletion
+cat("Number of rows with missing values before deletion:", length(rows_with_missing_before), "\n")
+
+# Display the rows with missing values before deletion
+cat("Rows with missing values before deletion:\n")
+print(ProfilFerS1[rows_with_missing_before, ])
+
+```
+
+```{r}
+
+# Load the dplyr library
+library(dplyr)
+
+# Convert specific values to NA using dplyr
+ProfilFerS1_cleaned <- ProfilFerS1 %>%
+  mutate_all(~ifelse(. %in% c("inconnu", "?", "NA", "ND", "0", "", "NON DEFINI"), NA, .)) %>%
+  na.omit()
+
+# Display the new version of the cleaned dataset
+print(ProfilFerS1_cleaned)
+```
+
+Discussion:
+
+Initially, the dataset **"ProfilFerS1"**dimension is 82420. We detected that there are 466 rows containing missing values. We removed them and rechecked the data dimension, which is now 81954.
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+##### D. "ProfilFerS2" Data set:
+
+```{r}
+dim(ProfilFerS2)
+```
+
+```{r}
+# Search for missing values in all columns
+rows_with_missing_before <- which(rowSums(is.na(ProfilFerS2) | ProfilFerS2 == "inconnu" | ProfilFerS2 == "?" | ProfilFerS2 == "NA" | ProfilFerS2 == "NON DEFINI" | ProfilFerS2 == "ND" | ProfilFerS2 == "0" | ProfilFerS2 == "") > 0)
+
+# Display the number of rows with missing values before deletion
+cat("Number of rows with missing values before deletion:", length(rows_with_missing_before), "\n")
+
+# Display the rows with missing values before deletion
+cat("Rows with missing values before deletion:\n")
+print(ProfilFerS2[rows_with_missing_before, ])
+```
+
+```{r}
+
+# Load the dplyr library
+library(dplyr)
+
+# Convert specific values to NA using dplyr
+ProfilFerS2_cleaned <- ProfilFerS2 %>%
+  mutate_all(~ifelse(. %in% c("inconnu", "?", "NA", "ND", "0", "", "NON DEFINI"), NA, .)) %>%
+  na.omit()
+
+# Display the new version of the cleaned dataset
+print(ProfilFerS2_cleaned)
+
+```
+
+Discussion:
+
+Initially, the dataset **"ProfilFerS2"**dimension is 82591. We detected that there are 123 rows containing missing values. We removed them and rechecked the data dimension, which is now 82468.
+
+```{r}
+# Charger la bibliothèque dplyr
+library(dplyr)
+
+# Renommer les colonnes de votre dataset ProfilFerS1
+colnames(ProfilFerS2_cleaned) <- c("CODE_STIF_TRNS", "CODE_STIF_RES", "CODE_STIF_ARRET", "LIBELLE_ARRET", "ID_REFA_LDA", "CAT_JOUR", "TRNC_HORR_60", "pourc_validations")
+
+
+
+
+```
+
+```{r}
+
+# Vérifier à nouveau les noms des colonnes
+names(ProfilFerS2_cleaned)
+```
