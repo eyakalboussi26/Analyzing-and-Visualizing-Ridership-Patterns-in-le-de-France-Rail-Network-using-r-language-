@@ -1,0 +1,542 @@
+---
+title: 'Data collection,cleaning,Visualization 2022'
+author: "eya kalboussi"
+date: "2023-12-20"
+output: html_document
+---
+
+### 1. Import Data
+
+```{r}
+##  Load the 2017 data
+NbValidS1 <- read.delim("/cloud/project/Data2022/NbValidS1.txt")
+NbValidS2 <- read.delim("/cloud/project/Data2022/NbValidS2.txt")
+ProfilFerS1 <- read.delim("/cloud/project/Data2022/ProfilFerS1.txt", header=FALSE)
+ProfilFerS2 <- read.delim2("/cloud/project/Data2022/ProfilFerS2.txt", header=FALSE)
+```
+
+### 2. Data Exploration: understanding the data, exploring its distribution, and identifying potential
+
+#### A. "NbValidS1" Data set:
+
+```{r}
+head(NbValidS1)
+```
+
+```{r}
+str(NbValidS1)
+```
+
+```{r}
+summary(NbValidS1)
+```
+
+```{r}
+dim(NbValidS1)
+
+```
+
+```{r}
+names(NbValidS1)
+```
+
+```{r}
+nrow(NbValidS1)
+```
+
+```{r}
+length(NbValidS1)
+```
+
+```         
+```
+
+### 3. Data cleaning : The data cleaning process involves, first and foremost, handling missing values, outliers, and any inconsistencies
+
+```{r}
+# Display rows with missing values before deletion
+rows_with_missing_before <- which(rowSums(is.na(NbValidS1) | NbValidS1 == "inconnu" | NbValidS1 == "?" | NbValidS1 == "NA" | NbValidS1 == "ND" | NbValidS1 == "0" | NbValidS1 == "") > 0)
+cat("Number of rows with missing values before deletion:", length(rows_with_missing_before), "\n")
+cat("Rows with missing values before deletion:\n")
+print(NbValidS1[rows_with_missing_before, ])
+
+```
+
+```{r}
+# Load the 'dplyr' library
+library(dplyr)
+
+# Remove rows containing specific values across the entire dataset
+NbValidS1_cleaned <- NbValidS1 %>%
+  filter_all(all_vars(!(. %in% c("inconnu", "?", "NA", "ND", "0", "", "NOT DEFINED"))))
+
+# Display the new dataset without specific values
+print(NbValidS1_cleaned)
+
+# Remove rows with NA values in the 'NB_VALD' column
+NbValidS1_cleaned <- NbValidS1_cleaned[!is.na(NbValidS1_cleaned$NB_VALD), ]
+
+
+```
+
+```{r}
+#display the dimension of the new datset
+dim(NbValidS1_cleaned)
+```
+
+Discussion:
+
+Initially, the dataset **"NbValidS1"**dimension is 780270. We detected that there are 3578 rows containing missing values. We removed them and rechecked the data dimension, which is now 776692.
+
+### **4. Data analysis and Visualization**
+
+A. Temporal Trends : Distribution of Validations per Day (Jour):
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+# Extract a subset of NbValidS1_cleaned for the row with the maximum value, including the columns 'JOUR', 'NB_VALD', and 'LIBELLE_ARRET'
+result <- NbValidS1_cleaned[which.max(NbValidS1_cleaned$NB_VALD), c("JOUR", "NB_VALD")]
+
+# Display the result
+print(result)
+
+# Create a plot of the number of validations per day
+plot_result <- ggplot(result, aes(x = JOUR, y = NB_VALD)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(x = "Day", y = "Number of Validations", title = "Day with Maximum number of validations S1 2017")
+
+# Show the graph
+print(plot_result)
+
+# Save the graph as an image file (e.g., ".png", ".jpg")
+ggsave("Day with Maximum number of validations S1 2017.png", plot_result, width = 10, height = 6, units = "in")
+
+
+```
+
+##### B. Spatial distribution : Distribution of Validations per Transport Stop label, type of ticket, (Time Slot, Stop Label, and Ticket Category)
+
+```{r}
+# Extract a subset of NbValidS1_cleaned for the row with the maximum value,including the columns 'JOUR', 'NB_VALD', and 'LIBELLE_ARRET'
+result <- NbValidS1_cleaned[which.max(NbValidS1_cleaned$NB_VALD), c( "JOUR","LIBELLE_ARRET", "NB_VALD","CATEGORIE_TITRE")]
+#display the resultat
+print(result)
+
+
+```
+
+```{r}
+# Replace "NbValidS1_cleaned" with the actual name of your dataset
+lowiest_vald_S1 <- NbValidS1_cleaned %>%
+  arrange(NB_VALD) %>%
+  slice_head(n = 2)
+
+# Display the two rows representing the categories with the lowiest validation values
+print(lowiest_vald_S1)
+
+# Save the two rows to a CSV file
+write.csv(lowiest_vald_S1, "lowiest_vald_S1.cvs", row.names = FALSE)
+
+
+```
+
+```{r}
+# Convert the column NB_VALD to a numeric type
+NbValidS1_cleaned$NB_VALD <- as.numeric(as.character(NbValidS1_cleaned$NB_VALD))
+
+# Create a graph showing the distribution of ticket categories based on the number of validations
+ticket_type_validations_dist <- ggplot(data = NbValidS1_cleaned, aes(x = CATEGORIE_TITRE, y = NB_VALD)) +
+  geom_bar(stat = "summary", fun = "sum", aes(fill = CATEGORIE_TITRE)) +
+  labs(x = "Ticket Category", y = "Total Validations", title = "Distribution of Ticket Types by Validations") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Save the graph as an image file (e.g., ".png", ".jpg")
+ggsave("ticket_type_validations_dist.png", ticket_type_validations_dist, width = 10, height = 6, units = "in")
+
+# Display the graph
+print(ticket_type_validations_dist)
+
+```
+
+```         
+```
+
+### Conclusion:
+
+During the first semester of 2017, starting in January and ending in June, our graphical analyses revealed that "Navigo" had the highest number of validations among all transportation passes 118394. We can conclude that during this period, "Navigo" was the best-selling ticket. Additionally, the stations recording the highest number of validations were "La Défense - Grande Arche". It can be inferred that users likely have a profile of professionals, given that "La Défense"is the heart of Paris's economic activity.Following Navigo, the transportation passes "Autre Titre" and "TST"were also notable.Also We found that the stations"ABBABES" and "Assemblee nationel" have the fewest validations, specifically fewer than 5 With transport ticket title is "Autre Titre". The"12/01/2017 " is the day that had the highest number of validations, totaling 118,394
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+### B. Data cleaning, analysis , Visualization
+
+We will proceed with the other datasets in the same way, following the same steps, to thoroughly analyze the number of validations in S2
+
+#### **B. "NbValidS2" Data set:**
+
+```{r}
+dim(NbValidS2)
+```
+
+```{r}
+# Search for missing values in all columns
+rows_with_missing_before <- which(rowSums(is.na(NbValidS2) | NbValidS2 == "inconnu" | NbValidS2 == "?" | NbValidS2 == "NA" | NbValidS2 == "NON DEFINI" | NbValidS2 == "ND" | NbValidS2 == "0" | NbValidS2 == "") > 0)
+
+# Display the number of rows with missing values before deletion
+cat("Number of rows with missing values before deletion:", length(rows_with_missing_before), "\n")
+
+# Display the rows with missing values before deletion
+cat("Rows with missing values before deletion:\n")
+print(NbValidS2[rows_with_missing_before, ])
+
+
+# Load the 'dplyr' library
+library(dplyr)
+
+# Remove rows containing specific values across the entire dataset
+NbValidS2_cleaned <- NbValidS2 %>%
+  filter_all(all_vars(!(. %in% c("inconnu", "?", "NA", "ND", "0", "", "NOT DEFINED"))))
+
+# Display the new dataset without specific values
+print(NbValidS2_cleaned)
+
+# Remove rows with NA values in the 'NB_VALD' column
+NbValidS2_cleaned <- NbValidS2_cleaned[!is.na(NbValidS2_cleaned$NB_VALD), ]
+
+
+```
+
+Discussion:
+
+Initially, the dataset **"NbValidS2"**dimension is 825698 . We detected that there are 121647 rows containing missing values. We removed them and rechecked the data dimension, which is now 704051.
+
+#### 1. Temporal Trends : Distribution of Validations per Day (Jour):
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+# Extract a subset of NbValidS1_cleaned for the row with the maximum value, including the columns 'JOUR', 'NB_VALD', and 'LIBELLE_ARRET'
+result <- NbValidS2_cleaned[which.max(NbValidS2_cleaned$NB_VALD), c("JOUR", "NB_VALD")]
+
+# Display the result
+print(result)
+
+# Create a plot of the number of validations per day
+plot_result <- ggplot(result, aes(x = JOUR, y = NB_VALD)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(x = "Day", y = "Number of Validations", title = "Number of Validations per Day with Maximum")
+
+# Show the graph
+print(plot_result)
+```
+
+#### 2. Spatial distribution : Distribution of Validations per Bus Stop and type of ticket (LIBELLE_ARRET et CATEGORIE_TITRE:
+
+```{r}
+# Extract a subset of NbValidS1_cleaned for the row with the maximum value,including the columns 'JOUR', 'NB_VALD', and 'LIBELLE_ARRET'
+result <- NbValidS2_cleaned[which.max(NbValidS2_cleaned$NB_VALD), c( "JOUR","LIBELLE_ARRET", "NB_VALD","CATEGORIE_TITRE")]
+#display the resultat
+print(result)
+
+```
+
+```{r}
+# Replace "NbValidS1_cleaned" with the actual name of your dataset
+lowiest_vald_S2 <- NbValidS2_cleaned %>%
+  arrange(NB_VALD) %>%
+  slice_head(n = 2)
+
+# Display the two rows representing the categories with the lowiest validation values
+print(lowiest_vald_S2)
+
+# Save the two rows to a CSV file
+write.csv(lowiest_vald_S2, "lowiest_vald_S2_data.cvs", row.names = FALSE)
+```
+
+```{r}
+library(ggplot2)
+# Creating a graph representing the distribution of ticket categories by number of validations for these two lines
+transport_ticket_validations_dist_S2 <- ggplot(NbValidS2_cleaned, aes(x = CATEGORIE_TITRE, y = NB_VALD, fill = CATEGORIE_TITRE)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Category of Ticket", y = "Number of Validations", title = "Distribution of validations for Ticket Transport category") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Save the graph with the file extension (e.g., ".png", ".jpg")
+ggsave("transport_ticket_validations_dist_S1.png", transport_ticket_validations_dist_S2, width = 10, height = 6, units = "in")
+
+# Displaying the graph
+print(transport_ticket_validations_dist_S2)
+```
+
+#### 3. Spatiotemporal Analysis of Transport Ticket Validations during the Second Semester of 2017
+
+During the second semester of 2017, starting in July and ending in december, our graphical analyses revealed that "Navigo" had the highest number of validations among all transportation passes 129080. We can conclude that during this period, "Navigo" was the best-selling ticket. Additionally, the stations recording the highest number of validations were "La Défense - Grande Arche". It can be inferred that users likely have a profile of professionals, given that La Défense is the heart of Paris's economic activity.Following Navigo, the transportation passes Imagine R and TST were also notable.Also We found that the stations "BUTTES-CHAUMONT" and "EGLISE D'AUTEUIL" have the fewest validations, specifically fewer than 5 With transport ticket title is "Autre Titre. The"23/11/2017 " is the day that had the highest number of validations, totaling 129080.
+
+```{r}
+# Load the dplyr library
+library(dplyr)
+
+# Convert the JOUR column to date format if it's not already in that format
+NbValidS2_cleaned$JOUR <- as.Date(NbValidS2_cleaned$JOUR, format = "%d/%m/%Y")
+
+# Specific dates
+dates <- c("2017-07-01", "2017-07-14", "2017-12-31", "2017-12-25")
+
+# Initialize a vector to store totals
+totals <- c()
+
+# Calculate the total number of validations for each specific date
+for (date in dates) {
+  filtered_data <- filter(NbValidS2_cleaned, JOUR == as.Date(date))
+  total <- sum(filtered_data$NB_VALD)
+  totals <- c(totals, total)
+  cat("Number of validations on", date, ":", total, "\n")
+}
+
+# Find the date with the maximum validations
+max_total <- max(totals)
+date_with_max <- dates[which.max(totals)]
+
+# Display the date with the maximum validations and its total
+cat("\nDate with the highest number of validations:", date_with_max, "\n")
+cat("Total validations for this date:", max_total, "\n")
+
+
+```
+
+#### 4. Comparison between the number of validations on a normal day, Christmas Day, the last day of the year, and National Day
+
+We found that on the date 2017-12-31, there were the fewest validations, equal to 1,138,961, which confirms our hypothesis as the French government offered free access without ticket validations from the transport terminals starting at 5 PM on 2017-12-31.
+
+The date 2017-07-01 had the highest number of validations: 2,844,861. Additionally, we observed a significant number of validations on 14/07/2017, indicating higher public movement due to the celebration of the French National Day."
+
+This text appears to be a summary or analysis discussing the number of validations on different specific dates, outlining the observations and the reasoning behind the variations in validation counts
+
+```{r}
+
+# Load the dplyr and ggplot2 libraries
+library(dplyr)
+library(ggplot2)
+
+# Convert the JOUR column to date format if it's not already in that format
+NbValidS2_cleaned$JOUR <- as.Date(NbValidS2_cleaned$JOUR, format = "%d/%m/%Y")
+
+# Specific dates
+dates <- c("2017-07-01", "2017-07-14", "2017-12-25", "2017-12-31")
+
+# Initialize a vector to store totals
+totals <- c()
+
+# Calculate the total number of validations for each specific date
+for (date in dates) {
+  filtered_data <- filter(NbValidS2_cleaned, JOUR == as.Date(date))
+  total <- sum(filtered_data$NB_VALD)
+  totals <- c(totals, total)
+  cat("Number of validations on", date, ":", total, "\n")
+}
+
+# Create a data frame for plotting
+results <- data.frame(Date = as.Date(dates, format = "%Y-%m-%d"), Validations = totals)
+
+# Plotting the validation counts for specific dates with specified x-axis dates
+ggplot(results, aes(x = Date, y = Validations)) +
+  geom_bar(stat = "identity", fill = "skyblue", width = 0.5) +
+  labs(title = "Validation Counts for Specific Dates in 2017",
+       x = "Date",
+       y = "Validation Counts") +
+  scale_x_date(breaks = as.Date(dates, format = "%Y-%m-%d"), labels = dates) +  # Set breaks and labels
+  theme_minimal()
+
+
+
+
+```
+
+#### 5. Comparison of Ticket Validation Counts between Summer Vacation and Normal School Periods in 2017
+
+```{r}
+# Load necessary libraries
+library(dplyr)
+library(ggplot2)
+
+# Convert the JOUR column to date format if it's not already in that format
+NbValidS2_cleaned$JOUR <- as.Date(NbValidS2_cleaned$JOUR, format = "%d/%m/%Y")
+
+# Define vacation and school periods
+summer_vacation_start <- as.Date("2017-07-08")
+summer_vacation_end <- as.Date("2017-09-03")
+normal_period_start <- as.Date("2017-09-04")
+normal_period_end <- as.Date("2017-10-10")
+
+# Filter data for vacation and school periods
+summer_data <- filter(NbValidS2_cleaned, JOUR >= summer_vacation_start & JOUR <= summer_vacation_end)
+normal_data <- filter(NbValidS2_cleaned, JOUR >= normal_period_start & JOUR <= normal_period_end)
+
+# Count the number of validations for each ticket type during vacation and school periods
+summer_counts <- summer_data %>% 
+  group_by(CATEGORIE_TITRE) %>% 
+  summarise(Validation_Counts = sum(NB_VALD))
+
+normal_counts <- normal_data %>% 
+  group_by(CATEGORIE_TITRE) %>% 
+  summarise(Validation_Counts = sum(NB_VALD))
+
+print(summer_counts)
+print(normal_counts)
+
+# Merge data for plotting
+combined_counts <- rbind(
+  mutate(summer_counts, Period = "Summer Vacation"),
+  mutate(normal_counts, Period = "Normal Period")
+)
+
+# Plot validation counts for ticket types during vacation and school periods
+ggplot(combined_counts, aes(x = CATEGORIE_TITRE, y = Validation_Counts, fill = Period)) +
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+  labs(title = "Validation Counts for Ticket Types",
+       x = "Ticket Type",
+       y = "Validation Counts") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  # Rotate x-axis labels for better readability
+  scale_fill_manual(values = c("Summer Vacation" = "skyblue", "Normal Period" = "salmon")) +
+  guides(fill = guide_legend(title = "Periods", nrow = 2))  # Add legend for fill colors
+
+
+```
+
+-   **Effect of Summer Vacation on IMAGINE R Transport Ticket Validations in Two Semesters of 2017**
+
+To assess the impact of summer vacation on the validation count of IMAGINE R transport tickets, we compared two periods within the second semester of 2017.
+
+The first period encompassed the summer school break, starting from ("2017-07-08") to ("2017-09-03"). During this time, we found that the validation count for NAVIGO transport tickets was 144,403,148, while for IMAGINE R tickets, it was 24,600,169.
+
+The second period represents the regular timeframe from ("2017-07-04") to ("2017-10-10"). Here, the validation count for NAVIGO tickets was 130,261,826, and for IMAGINE R tickets, it reached 31,434,154.
+
+=\> The rate of increase in IMAGINE R ticket validations between Period 1 and Period 2 is approximately 27.78%., we observe a significant impact from the summer school break on the validation count.
+
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
+
+#### C. "ProfilFerS1" Data set:
+
+```{r}
+dim(ProfilFerS1)
+```
+
+```{r}
+# Load data from file
+ProfilFerS1 <- read.delim("/cloud/project/Data2017/ProfilFerS1.txt", header = FALSE)
+
+# Define column names
+colnames(ProfilFerS1) <- c("CODE_STIF_TRNS", "CODE_STIF_RES", "CODE_STIF_ARRET", "LIBELLE_ARRET", "ID_REFA_LDA", "CAT_JOUR", "TRNC_HORR_60", "pourc_validations")
+
+# Identify rows with specific or missing values
+rows_to_remove <- which(rowSums(
+  is.na(ProfilFerS1) | 
+  ProfilFerS1 == "inconnu" | 
+  ProfilFerS1 == "?" | 
+  ProfilFerS1 == "NA" | 
+  ProfilFerS1 == "NOT DEFINED" | 
+  ProfilFerS1 == "ND" | 
+  ProfilFerS1 == "0" | 
+  ProfilFerS1 == ""
+) > 0)
+
+# Display the number of rows with specific or missing values before removal
+cat("Number of rows with specific or missing values before removal:", length(rows_to_remove), "\n")
+
+# Remove rows with specific or missing values
+ProfilFerS1_cleaned <- ProfilFerS1[-rows_to_remove, ]
+
+# Display the dimensions of the new dataset after cleaning
+cat("Dimensions of the dataset after cleaning:", dim(ProfilFerS1_cleaned), "\n")
+
+
+
+```
+
+```         
+```
+
+Discussion:
+
+Initially, the dataset **"ProfilFerS1"**dimension is 82420. We detected that there are 466 rows containing missing values. We removed them and rechecked the data dimension, which is now 81954.
+
+#### 6. Determining the High Validation Percentage with Day Category, Locations, and Time Slot:
+
+```{r}
+# Commenting the code for English readability
+library(dplyr)
+
+# Convert the 'pourc_validations' column to numeric if necessary
+ProfilFerS1_cleaned$pourc_validations <- as.numeric(as.character(ProfilFerS1_cleaned$pourc_validations))
+
+# Find the row with the maximum percentage of validations
+max_pourc_validations_row <- ProfilFerS1_cleaned %>%
+  filter(pourc_validations == max(pourc_validations, na.rm = TRUE))
+
+# Display the row with the maximum percentage of validations
+print(max_pourc_validations_row)
+
+
+```
+
+Discussion:
+
+While analyzing the ProfilFerS1 dataset to determine the type of day with the most validations, we discovered that 'SAVS' corresponds to a Saturday during school holidays, with a validation percentage of 100%. The location label is 'Dourdan la foret,' and the time slot is from 4 PM to 5 PM.
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+#### D. "ProfilFerS2" Data set:
+
+```{r}
+# Load data from file
+ProfilFerS2 <- read.delim2("/cloud/project/Data2017/ProfilFerS2.txt", header=FALSE)
+
+# Define column names
+colnames(ProfilFerS2) <- c("CODE_STIF_TRNS", "CODE_STIF_RES", "CODE_STIF_ARRET", "LIBELLE_ARRET", "ID_REFA_LDA", "CAT_JOUR", "TRNC_HORR_60", "pourc_validations")
+
+# Identify rows with specific or missing values
+rows_to_remove <- which(rowSums(
+  is.na(ProfilFerS2) | 
+  ProfilFerS2 == "Inconnu" | 
+  ProfilFerS2 == "?" | 
+  ProfilFerS2 == "NA" | 
+  ProfilFerS2 == "NOT DEFINED" | 
+  ProfilFerS2 == "ND" | 
+  ProfilFerS2 == "0" | 
+  ProfilFerS2 == ""
+) > 0)
+
+# Display the number of rows with specific or missing values before removal
+cat("Number of rows with specific or missing values before removal:", length(rows_to_remove), "\n")
+
+# Remove rows with specific or missing values
+ProfilFerS2_cleaned <- ProfilFerS1[-rows_to_remove, ]
+
+# Display the dimensions of the new dataset after cleaning
+cat("Dimensions of the dataset after cleaning:", dim(ProfilFerS2_cleaned), "\n")
+```
+
+Discussion:
+
+Initially, the dataset **"ProfilFerS2"**dimension is 82591. We detected that there are 123 rows containing missing values. We removed them and rechecked the data dimension, which is now 82468.
+
+```{r}
+# Commenting the code for English readability
+library(dplyr)
+
+# Convert the 'pourc_validations' column to numeric if necessary
+ProfilFerS2_cleaned$pourc_validations <- as.numeric(as.character(ProfilFerS2_cleaned$pourc_validations))
+
+# Find the row with the maximum percentage of validations
+max_pourc_validations_row_S2 <- ProfilFerS2_cleaned %>%
+  filter(pourc_validations == max(pourc_validations, na.rm = TRUE))
+
+# Display the row with the maximum percentage of validations
+print(max_pourc_validations_row_S2)
+
+```

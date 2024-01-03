@@ -1,0 +1,182 @@
+---
+title: 'Data collection,cleaning,Visualization 2023'
+author: "eya kalboussi"
+date: "2024-01-03"
+output: html_document
+---
+
+### 1. Import Data
+
+```{r}
+##  Load the 2023 data
+NbValidS1 <- read.csv("/cloud/project/Data2023/NbValidS1.csv", sep=";")
+
+```
+
+### 2. Data Exploration: understanding the data, exploring its distribution, and identifying potential
+
+#### A. "NbValidS1" Data set:
+
+```{r}
+head(NbValidS1)
+```
+
+```{r}
+str(NbValidS1)
+```
+
+```{r}
+summary(NbValidS1)
+```
+
+```{r}
+dim(NbValidS1)
+
+```
+
+```{r}
+names(NbValidS1)
+```
+
+```{r}
+nrow(NbValidS1)
+```
+
+```{r}
+length(NbValidS1)
+```
+
+```         
+```
+
+### 3. Data cleaning : The data cleaning process involves, first and foremost, handling missing values, outliers, and any inconsistencies
+
+```{r}
+# Display rows with missing values before deletion
+rows_with_missing_before <- which(rowSums(is.na(NbValidS1) | NbValidS1 == "inconnu" | NbValidS1 == "?" | NbValidS1== "NA" | NbValidS1 == "ND" | NbValidS1 == "0" | NbValidS1 == "") > 0)
+cat("Number of rows with missing values before deletion:", length(rows_with_missing_before), "\n")
+cat("Rows with missing values before deletion:\n")
+print(NbValidS1[rows_with_missing_before, ])
+
+```
+
+```{r}
+# Load the 'dplyr' library
+library(dplyr)
+
+# Remove rows containing specific values across the entire dataset
+NbValidS1_cleaned <- NbValidS1 %>%
+  filter_all(all_vars(!(. %in% c("inconnu", "?", "NA", "ND", "0", "", "NOT DEFINED"))))
+
+# Display the new dataset without specific values
+print(NbValidS1_cleaned)
+
+# Remove rows with NA values in the 'NB_VALD' column
+NbValidS1_cleaned <- NbValidS1_cleaned[!is.na(NbValidS1_cleaned$NB_VALD), ]
+
+
+```
+
+```{r}
+#display the dimension of the new datset
+dim(NbValidS1_cleaned)
+```
+
+Discussion:
+
+Initially, the dataset **"NbValidS1"**dimension is 1096209. We detected that there are rows 130042containing missing values. We removed them and rechecked the data dimension, which is now 966167.
+
+### **4. Data analysis and Visualization**
+
+##### A. Temporal Trends : Distribution of Validations per Day (Jour):
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+# Extract a subset of NbValidS1_cleaned for the row with the maximum value, including the columns 'JOUR', 'NB_VALD', and 'LIBELLE_ARRET'
+result <- NbValidS1_cleaned[which.max(NbValidS1_cleaned$NB_VALD), c("JOUR", "NB_VALD")]
+
+# Display the result
+print(result)
+
+# Create a plot of the number of validations per day
+plot_result <- ggplot(result, aes(x = JOUR, y = NB_VALD)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(x = "Day", y = "Number of Validations", title = "Day with Maximum number of validations S1 2019")
+
+# Show the graph
+print(plot_result)
+
+# Save the graph as an image file (e.g., ".png", ".jpg")
+ggsave("Day with Maximum number of validations S1 2023.png", plot_result, width = 10, height = 6, units = "in")
+
+
+
+```
+
+##### B. Spatial distribution : Distribution of Validations per Transport Stop label, type of ticket, (Time Slot, Stop Label, and Ticket Category)
+
+```{r}
+# Extract a subset of NbValidS1_cleaned for the row with the maximum value,including the columns 'JOUR', 'NB_VALD', and 'LIBELLE_ARRET'
+result <- NbValidS1_cleaned[which.max(NbValidS1_cleaned$NB_VALD), c( "JOUR","LIBELLE_ARRET", "NB_VALD","CATEGORIE_TITRE")]
+#display the resultat
+print(result)
+```
+
+```{r}
+# Replace "NbValidS1_cleaned" with the actual name of your dataset
+lowiest_vald_S1 <- NbValidS1_cleaned %>%
+  arrange((NB_VALD)) %>%
+  slice_head(n = 2)
+
+# Display the two rows representing the categories with the lowiest validation values
+print(lowiest_vald_S1)
+
+# Save the two rows to a CSV file
+write.csv(lowiest_vald_S1, "lowiest_vald_S1.cvs", row.names = FALSE)
+
+
+
+
+
+
+
+
+
+```
+
+```         
+```
+
+```{r}
+# Convert the column NB_VALD to a numeric type
+NbValidS1_cleaned$NB_VALD <- as.numeric(as.character(NbValidS1_cleaned$NB_VALD))
+
+# Create a graph showing the distribution of ticket categories based on the number of validations
+Tick_typ_valids_dist_S1 <- ggplot(data = NbValidS1_cleaned, aes(x = CATEGORIE_TITRE, y = NB_VALD)) +
+  geom_bar(stat = "summary", fun = "sum", aes(fill = CATEGORIE_TITRE)) +
+  labs(x = "Ticket Category", y = "Total Validations", title = "Distribution of Ticket Types by Validations") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Save the graph as an image file (e.g., ".png", ".jpg")
+ggsave("Tick_typ_valids_dist_S1.png", Tick_typ_valids_dist_S1, width = 10, height = 6, units = "in")
+
+# Display the graph
+print(Tick_typ_valids_dist_S1)
+```
+
+### Conclusion:
+
+-   During the first semester of 2023, starting in January and ending in June, our graphical analyses revealed that "NAVIGO" had the highest number of validations among all transportation passes 94766.
+
+-   We can conclude that during this period, "NAVIGO" was the best-selling ticket. Additionally, the stations recording the highest number of validations were "La Défense". It can be inferred that users likely have a profile of professionals, given that "La Défense"is the heart of Paris's economic activity.
+
+-   Following Navigo, the transportation passes "IMAGINE R" and "TST"were also notable.Also We found that the stations "NOINTEL MOURS" and " VALMONDOIS" have the fewest validations, specifically fewer than 5 With transport ticket title is "Navigo Jour" in 26/06/2023.
+
+-   The"17/01/2023 " is the day that had the highest number of validations, totaling 94766
+
+-   Comparing 2022 and 2023, we see that the number of validations for transport tickets of type NAVIGO increased from xxxxx to 94766 .
+
+    =\> So, the progress rate or percentage increase between 2022 and 2023 for the number of validations of NAVIGO transport tickets is approximately xxxx%.
