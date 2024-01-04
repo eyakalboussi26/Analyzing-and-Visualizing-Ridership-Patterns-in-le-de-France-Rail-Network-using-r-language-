@@ -8,7 +8,7 @@ output: html_document
 ### 1. Import Data
 
 ```{r}
-##  Load the 2017 data
+##  Load the 2022 data
 NbValidS1 <- read.delim("/cloud/project/Data2022/NbValidS1.txt")
 NbValidS2 <- read.delim("/cloud/project/Data2022/NbValidS2.txt")
 ProfilFerS1 <- read.delim("/cloud/project/Data2022/ProfilFerS1.txt", header=FALSE)
@@ -86,7 +86,7 @@ dim(NbValidS1_cleaned)
 
 Discussion:
 
-Initially, the dataset **"NbValidS1"**dimension is 780270. We detected that there are 3578 rows containing missing values. We removed them and rechecked the data dimension, which is now 776692.
+Initially, the dataset **"NbValidS1"**dimension is 1088334. We detected that there are 120417rows containing missing values. We removed them and rechecked the data dimension, which is now 967917.
 
 ### **4. Data analysis and Visualization**
 
@@ -105,13 +105,13 @@ print(result)
 # Create a plot of the number of validations per day
 plot_result <- ggplot(result, aes(x = JOUR, y = NB_VALD)) +
   geom_bar(stat = "identity", fill = "skyblue") +
-  labs(x = "Day", y = "Number of Validations", title = "Day with Maximum number of validations S1 2017")
+  labs(x = "Day", y = "Number of Validations", title = "Day with Maximum number of validations S1 2022")
 
 # Show the graph
 print(plot_result)
 
 # Save the graph as an image file (e.g., ".png", ".jpg")
-ggsave("Day with Maximum number of validations S1 2017.png", plot_result, width = 10, height = 6, units = "in")
+ggsave("Day with Maximum number of validations S1 2022.png", plot_result, width = 10, height = 6, units = "in")
 
 
 ```
@@ -143,21 +143,19 @@ write.csv(lowiest_vald_S1, "lowiest_vald_S1.cvs", row.names = FALSE)
 ```
 
 ```{r}
-# Convert the column NB_VALD to a numeric type
-NbValidS1_cleaned$NB_VALD <- as.numeric(as.character(NbValidS1_cleaned$NB_VALD))
-
-# Create a graph showing the distribution of ticket categories based on the number of validations
-ticket_type_validations_dist <- ggplot(data = NbValidS1_cleaned, aes(x = CATEGORIE_TITRE, y = NB_VALD)) +
-  geom_bar(stat = "summary", fun = "sum", aes(fill = CATEGORIE_TITRE)) +
-  labs(x = "Ticket Category", y = "Total Validations", title = "Distribution of Ticket Types by Validations") +
+library(ggplot2)
+# Creating a graph representing the distribution of ticket categories by number of validations for these two lines
+Ticket_valD_dist_S1_2022 <- ggplot(NbValidS1_cleaned, aes(x = CATEGORIE_TITRE, y = NB_VALD, fill = CATEGORIE_TITRE)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Category of Ticket", y = "Number of Validations", title = "Distribution of validations for Ticket Transport category S2 2022") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-# Save the graph as an image file (e.g., ".png", ".jpg")
-ggsave("ticket_type_validations_dist.png", ticket_type_validations_dist, width = 10, height = 6, units = "in")
+# Save the graph with the file extension (e.g., ".png", ".jpg")
+ggsave("Ticket_valD_dist_S1_2022.png", Ticket_valD_dist_S1_2022, width = 10, height = 6, units = "in")
 
-# Display the graph
-print(ticket_type_validations_dist)
+# Displaying the graph
+print(Ticket_valD_dist_S1_2022)
 
 ```
 
@@ -166,7 +164,15 @@ print(ticket_type_validations_dist)
 
 ### Conclusion:
 
-During the first semester of 2017, starting in January and ending in June, our graphical analyses revealed that "Navigo" had the highest number of validations among all transportation passes 118394. We can conclude that during this period, "Navigo" was the best-selling ticket. Additionally, the stations recording the highest number of validations were "La Défense - Grande Arche". It can be inferred that users likely have a profile of professionals, given that "La Défense"is the heart of Paris's economic activity.Following Navigo, the transportation passes "Autre Titre" and "TST"were also notable.Also We found that the stations"ABBABES" and "Assemblee nationel" have the fewest validations, specifically fewer than 5 With transport ticket title is "Autre Titre". The"12/01/2017 " is the day that had the highest number of validations, totaling 118,394
+-   During the first semester of 2022, starting in January and ending in June, our graphical analyses revealed that "Navigo" had the highest number of validations among all transportation passes 87304.
+
+-   We can conclude that during this period, "Navigo" was the best-selling ticket. Additionally, the stations recording the highest number of validations is Saint-Lazare station.
+
+-   The Saint-Lazare station is served by regional trains, long-distance trains, and suburban lines, facilitating travel for both local and national passengers
+
+-   Following Navigo, the transportation passes "Imagine r" and "TST"were also notable.Also We found that the stations "ALESIA" and "BOULOGNE-PONT DE SAINT" have the fewest validations, specifically fewer than 5 With transport ticket title is "Navigo Jour" at 01/01/2022.
+
+-   "14/06/2022" is the day that had the highest number of validations, totaling 87304
 
 \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
 
@@ -210,7 +216,7 @@ NbValidS2_cleaned <- NbValidS2_cleaned[!is.na(NbValidS2_cleaned$NB_VALD), ]
 
 Discussion:
 
-Initially, the dataset **"NbValidS2"**dimension is 825698 . We detected that there are 121647 rows containing missing values. We removed them and rechecked the data dimension, which is now 704051.
+Initially, the dataset **"NbValidS2"**dimension is 1105947 . We detected that there are 251185 rows containing missing values. We removed them and rechecked the data dimension, which is now 974837
 
 #### 1. Temporal Trends : Distribution of Validations per Day (Jour):
 
@@ -259,22 +265,31 @@ write.csv(lowiest_vald_S2, "lowiest_vald_S2_data.cvs", row.names = FALSE)
 ```{r}
 library(ggplot2)
 # Creating a graph representing the distribution of ticket categories by number of validations for these two lines
-transport_ticket_validations_dist_S2 <- ggplot(NbValidS2_cleaned, aes(x = CATEGORIE_TITRE, y = NB_VALD, fill = CATEGORIE_TITRE)) +
+Ticket_valD_dist_S2_2022 <- ggplot(NbValidS2_cleaned, aes(x = CATEGORIE_TITRE, y = NB_VALD, fill = CATEGORIE_TITRE)) +
   geom_bar(stat = "identity") +
-  labs(x = "Category of Ticket", y = "Number of Validations", title = "Distribution of validations for Ticket Transport category") +
+  labs(x = "Category of Ticket", y = "Number of Validations", title = "Distribution of validations for Ticket Transport category S2 2022") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 # Save the graph with the file extension (e.g., ".png", ".jpg")
-ggsave("transport_ticket_validations_dist_S1.png", transport_ticket_validations_dist_S2, width = 10, height = 6, units = "in")
+ggsave("Ticket_valD_dist_S2_2022.png", Ticket_valD_dist_S2_2022, width = 10, height = 6, units = "in")
 
 # Displaying the graph
-print(transport_ticket_validations_dist_S2)
+print(Ticket_valD_dist_S2_2022)
 ```
 
-#### 3. Spatiotemporal Analysis of Transport Ticket Validations during the Second Semester of 2017
+#### 3. Spatiotemporal Analysis of Transport Ticket Validations during the Second Semester of 2022
 
-During the second semester of 2017, starting in July and ending in december, our graphical analyses revealed that "Navigo" had the highest number of validations among all transportation passes 129080. We can conclude that during this period, "Navigo" was the best-selling ticket. Additionally, the stations recording the highest number of validations were "La Défense - Grande Arche". It can be inferred that users likely have a profile of professionals, given that La Défense is the heart of Paris's economic activity.Following Navigo, the transportation passes Imagine R and TST were also notable.Also We found that the stations "BUTTES-CHAUMONT" and "EGLISE D'AUTEUIL" have the fewest validations, specifically fewer than 5 With transport ticket title is "Autre Titre. The"23/11/2017 " is the day that had the highest number of validations, totaling 129080.
+-   During the second semester of 2022, starting in july and ending in decembre, our graphical analyses revealed that "Navigo" had the highest number of validations among all transportation passes 92139.
+
+-   We can conclude that during this period, "Navigo" was the best-selling ticket. Additionally, the stations recording the highest number of validations is Saint-Lazare station.
+
+-   The Saint-Lazare station is served by regional trains, long-distance trains, and suburban lines, facilitating travel for both local and national passengers
+
+-   Following Navigo, the transportation passes "Imagine r" and "TST"were also notable.Also We found that the stations "BOULOGNE-ST.CL"" and \
+    \* CHARDON-LAGACH "" have the fewest validations, specifically fewer than 5 With transport ticket title is "Navigo Jour" at 01/07/2022.
+
+-   "29/11/2022" is the day that had the highest number of validations, totaling 87304
 
 ```{r}
 # Load the dplyr library
@@ -284,7 +299,7 @@ library(dplyr)
 NbValidS2_cleaned$JOUR <- as.Date(NbValidS2_cleaned$JOUR, format = "%d/%m/%Y")
 
 # Specific dates
-dates <- c("2017-07-01", "2017-07-14", "2017-12-31", "2017-12-25")
+dates <- c("2022-07-01", "2022-07-14", "2022-12-31", "2022-12-25")
 
 # Initialize a vector to store totals
 totals <- c()
@@ -310,9 +325,9 @@ cat("Total validations for this date:", max_total, "\n")
 
 #### 4. Comparison between the number of validations on a normal day, Christmas Day, the last day of the year, and National Day
 
-We found that on the date 2017-12-31, there were the fewest validations, equal to 1,138,961, which confirms our hypothesis as the French government offered free access without ticket validations from the transport terminals starting at 5 PM on 2017-12-31.
+We found that on the date 2022-12-25, there were the fewest validations, equal to , which confirms our hypothesis as the French people stay at home to celebrate Christmas with family and friends.
 
-The date 2017-07-01 had the highest number of validations: 2,844,861. Additionally, we observed a significant number of validations on 14/07/2017, indicating higher public movement due to the celebration of the French National Day."
+The date 2022-07-01 had the highest number of validations: 4714903. Additionally, we observed a significant number of validations on 14/07/2022, indicating higher public movement due to the celebration of the French National Day."
 
 This text appears to be a summary or analysis discussing the number of validations on different specific dates, outlining the observations and the reasoning behind the variations in validation counts
 
@@ -326,7 +341,7 @@ library(ggplot2)
 NbValidS2_cleaned$JOUR <- as.Date(NbValidS2_cleaned$JOUR, format = "%d/%m/%Y")
 
 # Specific dates
-dates <- c("2017-07-01", "2017-07-14", "2017-12-25", "2017-12-31")
+dates <- c("2022-07-01", "2022-07-14", "2022-12-31", "2022-12-25")
 
 # Initialize a vector to store totals
 totals <- c()
@@ -345,7 +360,7 @@ results <- data.frame(Date = as.Date(dates, format = "%Y-%m-%d"), Validations = 
 # Plotting the validation counts for specific dates with specified x-axis dates
 ggplot(results, aes(x = Date, y = Validations)) +
   geom_bar(stat = "identity", fill = "skyblue", width = 0.5) +
-  labs(title = "Validation Counts for Specific Dates in 2017",
+  labs(title = "Validation Counts for Specific Dates in 2022",
        x = "Date",
        y = "Validation Counts") +
   scale_x_date(breaks = as.Date(dates, format = "%Y-%m-%d"), labels = dates) +  # Set breaks and labels
@@ -356,7 +371,7 @@ ggplot(results, aes(x = Date, y = Validations)) +
 
 ```
 
-#### 5. Comparison of Ticket Validation Counts between Summer Vacation and Normal School Periods in 2017
+#### 5. Comparison of Ticket Validation Counts between Summer Vacation and Normal School Periods in 2022
 
 ```{r}
 # Load necessary libraries
@@ -367,10 +382,10 @@ library(ggplot2)
 NbValidS2_cleaned$JOUR <- as.Date(NbValidS2_cleaned$JOUR, format = "%d/%m/%Y")
 
 # Define vacation and school periods
-summer_vacation_start <- as.Date("2017-07-08")
-summer_vacation_end <- as.Date("2017-09-03")
-normal_period_start <- as.Date("2017-09-04")
-normal_period_end <- as.Date("2017-10-10")
+summer_vacation_start <- as.Date("2022-07-08")
+summer_vacation_end <- as.Date("2022-09-03")
+normal_period_start <- as.Date("2022-09-04")
+normal_period_end <- as.Date("2022-10-10")
 
 # Filter data for vacation and school periods
 summer_data <- filter(NbValidS2_cleaned, JOUR >= summer_vacation_start & JOUR <= summer_vacation_end)
@@ -408,15 +423,15 @@ ggplot(combined_counts, aes(x = CATEGORIE_TITRE, y = Validation_Counts, fill = P
 
 ```
 
--   **Effect of Summer Vacation on IMAGINE R Transport Ticket Validations in Two Semesters of 2017**
+-   **Effect of Summer Vacation on IMAGINE R Transport Ticket Validations in Two Semesters of 2022**
 
-To assess the impact of summer vacation on the validation count of IMAGINE R transport tickets, we compared two periods within the second semester of 2017.
+To assess the impact of summer vacation on the validation count of IMAGINE R transport tickets, we compared two periods within the second semester of 2022.
 
-The first period encompassed the summer school break, starting from ("2017-07-08") to ("2017-09-03"). During this time, we found that the validation count for NAVIGO transport tickets was 144,403,148, while for IMAGINE R tickets, it was 24,600,169.
+The first period encompassed the summer school break, starting from ("2022-07-08") to ("2022-09-03"). During this time, we found that the validation count for NAVIGO transport tickets was 105640379 , while for IMAGINE R tickets, it was 41019728.
 
-The second period represents the regular timeframe from ("2017-07-04") to ("2017-10-10"). Here, the validation count for NAVIGO tickets was 130,261,826, and for IMAGINE R tickets, it reached 31,434,154.
+The second period represents the regular timeframe from ("2022-09-04") to ("2022-10-10"). Here, the validation count for NAVIGO tickets was 97082966, and for IMAGINE R tickets, it reached 44207729.
 
-=\> The rate of increase in IMAGINE R ticket validations between Period 1 and Period 2 is approximately 27.78%., we observe a significant impact from the summer school break on the validation count.
+=\> The rate of progess in IMAGINE R ticket validations between Period 1 and Period 2 is approximately 7.77 %., we observe a significant impact from the summer school break on the validation count.
 
 \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
 
@@ -428,7 +443,7 @@ dim(ProfilFerS1)
 
 ```{r}
 # Load data from file
-ProfilFerS1 <- read.delim("/cloud/project/Data2017/ProfilFerS1.txt", header = FALSE)
+ProfilFerS1 <- read.delim("/cloud/project/Data2022/ProfilFerS1.txt", header = FALSE)
 
 # Define column names
 colnames(ProfilFerS1) <- c("CODE_STIF_TRNS", "CODE_STIF_RES", "CODE_STIF_ARRET", "LIBELLE_ARRET", "ID_REFA_LDA", "CAT_JOUR", "TRNC_HORR_60", "pourc_validations")
@@ -463,7 +478,7 @@ cat("Dimensions of the dataset after cleaning:", dim(ProfilFerS1_cleaned), "\n")
 
 Discussion:
 
-Initially, the dataset **"ProfilFerS1"**dimension is 82420. We detected that there are 466 rows containing missing values. We removed them and rechecked the data dimension, which is now 81954.
+Initially, the dataset **"ProfilFerS1"**dimension is 832. We detected that there are 277 rows containing missing values. We removed them and rechecked the data dimension, which is now 82984.
 
 #### 6. Determining the High Validation Percentage with Day Category, Locations, and Time Slot:
 
@@ -493,8 +508,7 @@ While analyzing the ProfilFerS1 dataset to determine the type of day with the mo
 #### D. "ProfilFerS2" Data set:
 
 ```{r}
-# Load data from file
-ProfilFerS2 <- read.delim2("/cloud/project/Data2017/ProfilFerS2.txt", header=FALSE)
+
 
 # Define column names
 colnames(ProfilFerS2) <- c("CODE_STIF_TRNS", "CODE_STIF_RES", "CODE_STIF_ARRET", "LIBELLE_ARRET", "ID_REFA_LDA", "CAT_JOUR", "TRNC_HORR_60", "pourc_validations")
@@ -515,7 +529,7 @@ rows_to_remove <- which(rowSums(
 cat("Number of rows with specific or missing values before removal:", length(rows_to_remove), "\n")
 
 # Remove rows with specific or missing values
-ProfilFerS2_cleaned <- ProfilFerS1[-rows_to_remove, ]
+ProfilFerS2_cleaned <- ProfilFerS[-rows_to_remove, ]
 
 # Display the dimensions of the new dataset after cleaning
 cat("Dimensions of the dataset after cleaning:", dim(ProfilFerS2_cleaned), "\n")
@@ -523,7 +537,7 @@ cat("Dimensions of the dataset after cleaning:", dim(ProfilFerS2_cleaned), "\n")
 
 Discussion:
 
-Initially, the dataset **"ProfilFerS2"**dimension is 82591. We detected that there are 123 rows containing missing values. We removed them and rechecked the data dimension, which is now 82468.
+Initially, the dataset **"ProfilFerS2"**dimension is 85255. We detected that there are 118 rows containing missing values. We removed them and rechecked the data dimension, which is now 85137.
 
 ```{r}
 # Commenting the code for English readability
