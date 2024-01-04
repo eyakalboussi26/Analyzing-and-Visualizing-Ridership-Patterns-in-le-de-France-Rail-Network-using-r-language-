@@ -178,7 +178,40 @@ print(transport_ticket_validations_dist_S1_2023)
 
 -   So, the regression rate os rate or percentage increase between 2021 and 2019 for the number of validations of NAVIGO transport tickets is approximately 24.17%
 
-=\> The impact of the coronavirus on the number of validations explains the decrease in the number of validations due to the lockdown and the emergence of telecommuting during the years 2017 to 2019. During that time, La Défense - Grande Arche was the station with the most validations in Île-de-France. However, in 2021, Saint Lazare has the highest number of validations.
+=\> The impact of the coronavirus on the number of validations explains the decrease in the number of validations due to the lockdown the period of confinement from March 20th to May 3rd, 2021 and the emergence of telecommuting during the years 2017 to 2019. During that time, La Défense - Grande Arche was the station with the most validations in Île-de-France. However, in 2021, Saint Lazare has the highest number of validations.
+
+#### 4. Number of ticket validations during the period of confinement from March 20th to May 3rd, 2021
+
+```{r}
+# Load necessary libraries
+library(dplyr)
+
+# Convert the JOUR column to date format if it's not already in that format
+NbValidS1_cleaned$JOUR <- as.Date(NbValidS1_cleaned$JOUR, format = "%d/%m/%Y")
+
+# Define the confinement and return to normal life periods
+normal_life_start <- as.Date("2023-01-01")
+normal_life_end <- as.Date("2023-02-18")
+confinement_start <- as.Date("2021-03-20")
+confinement_end <- as.Date("2021-05-03")
+
+
+# Filter data for confinement and return to normal life periods
+confinement_data <- filter(NbValidS1_cleaned, JOUR >= confinement_start & JOUR <= confinement_end)
+normal_life_data <- filter(NbValidS1_cleaned, JOUR >= normal_life_start & JOUR <= normal_life_end)
+
+# Calculate the number of validations for each period
+total_validations_confinement <- sum(confinement_data$NB_VALD)
+total_validations_normal_life <- sum(normal_life_data$NB_VALD)
+
+# Display the results
+print(total_validations_confinement)
+print(total_validations_normal_life)
+
+
+```
+
+From March 20th to May 3rd, 2021: It was the period of a strict lockdown implemented in France due to the COVID-19 pandemic. During this period, there were no validation tickets available.
 
 \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
 
@@ -240,7 +273,7 @@ print(result)
 # Create a plot of the number of validations per day
 plot_result <- ggplot(result, aes(x = JOUR, y = NB_VALD)) +
   geom_bar(stat = "identity", fill = "skyblue") +
-  labs(x = "Day", y = "Number of Validations", title = "Number of Validations per Day with Maximum")
+  labs(x = "Day", y = "Number of Validations", title = "Number of Validations per Day with Maximum S2")
 
 # Show the graph
 print(plot_result)
@@ -274,15 +307,15 @@ library(ggplot2)
 # Creating a graph representing the distribution of ticket categories by number of validations for these two lines
 Ticket_Vald_Distrubution_S2_2023 <- ggplot(NbValidS2_cleaned, aes(x = CATEGORIE_TITRE, y = NB_VALD, fill = CATEGORIE_TITRE)) +
   geom_bar(stat = "identity") +
-  labs(x = "Category of Ticket", y = "Number of Validations", title = "Distribution of validations for Ticket Transport category") +
+  labs(x = "Category of Ticket", y = "Number of Validations", title = "Distribution of validations for Ticket Transport category S2 2023") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 # Save the graph with the file extension (e.g., ".png", ".jpg")
-ggsave("transport_ticket_validations_dist_S2_2023.png", Ticket_Vald_Distrubution_S2_2023, width = 10, height = 6, units = "in")
+ggsave("Ticket_Vald_Distrubution_S2_2023.png", Ticket_Vald_Distrubution_S2_2023, width = 10, height = 6, units = "in")
 
 # Displaying the graph
-print(transport_ticket_validations_dist_S2_2023)
+print(Ticket_Vald_Distrubution_S2_2023)
 ```
 
 #### 3. Spatiotemporal Analysis of Transport Ticket Validations during the Second Semester of 2021
@@ -297,86 +330,21 @@ print(transport_ticket_validations_dist_S2_2023)
 -   The"18/11/2021 " is the day that had the highest number of validations, totaling 90901.
 
 ```{r}
-# Load the dplyr library
-library(dplyr)
 
-# Convert the JOUR column to date format if it's not already in that format
-NbValidS2_cleaned$JOUR <- as.Date(NbValidS2_cleaned$JOUR, format = "%d/%m/%Y")
-
-# Specific dates
-dates <- c("2017-07-01", "2017-07-14", "2017-12-31", "2017-12-25")
-
-# Initialize a vector to store totals
-totals <- c()
-
-# Calculate the total number of validations for each specific date
-for (date in dates) {
-  filtered_data <- filter(NbValidS2_cleaned, JOUR == as.Date(date))
-  total <- sum(filtered_data$NB_VALD)
-  totals <- c(totals, total)
-  cat("Number of validations on", date, ":", total, "\n")
-}
-
-# Find the date with the maximum validations
-max_total <- max(totals)
-date_with_max <- dates[which.max(totals)]
-
-# Display the date with the maximum validations and its total
-cat("\nDate with the highest number of validations:", date_with_max, "\n")
-cat("Total validations for this date:", max_total, "\n")
 
 
 ```
-
-#### 4. Comparison between the number of validations on a normal day, Christmas Day, the last day of the year, and National Day
-
-We found that on the date 2017-12-31, there were the fewest validations, equal to 1,138,961, which confirms our hypothesis as the French government offered free access without ticket validations from the transport terminals starting at 5 PM on 2017-12-31.
-
-The date 2017-07-01 had the highest number of validations: 2,844,861. Additionally, we observed a significant number of validations on 14/07/2017, indicating higher public movement due to the celebration of the French National Day."
-
-This text appears to be a summary or analysis discussing the number of validations on different specific dates, outlining the observations and the reasoning behind the variations in validation counts
 
 ```{r}
 
-# Load the dplyr and ggplot2 libraries
-library(dplyr)
-library(ggplot2)
 
-# Convert the JOUR column to date format if it's not already in that format
-NbValidS2_cleaned$JOUR <- as.Date(NbValidS2_cleaned$JOUR, format = "%d/%m/%Y")
-
-# Specific dates
-dates <- c("2017-07-01", "2017-07-14", "2017-12-25", "2017-12-31")
-
-# Initialize a vector to store totals
-totals <- c()
-
-# Calculate the total number of validations for each specific date
-for (date in dates) {
-  filtered_data <- filter(NbValidS2_cleaned, JOUR == as.Date(date))
-  total <- sum(filtered_data$NB_VALD)
-  totals <- c(totals, total)
-  cat("Number of validations on", date, ":", total, "\n")
-}
-
-# Create a data frame for plotting
-results <- data.frame(Date = as.Date(dates, format = "%Y-%m-%d"), Validations = totals)
-
-# Plotting the validation counts for specific dates with specified x-axis dates
-ggplot(results, aes(x = Date, y = Validations)) +
-  geom_bar(stat = "identity", fill = "skyblue", width = 0.5) +
-  labs(title = "Validation Counts for Specific Dates in 2017",
-       x = "Date",
-       y = "Validation Counts") +
-  scale_x_date(breaks = as.Date(dates, format = "%Y-%m-%d"), labels = dates) +  # Set breaks and labels
-  theme_minimal()
 
 
 
 
 ```
 
-#### 5. Comparison of Ticket Validation Counts between Summer Vacation and Normal School Periods in 2017
+#### 5. Comparison of Ticket Validation Counts between Summer Vacation and Normal School Periods  after the  strict lockdown in 2021
 
 ```{r}
 # Load necessary libraries
@@ -387,10 +355,10 @@ library(ggplot2)
 NbValidS2_cleaned$JOUR <- as.Date(NbValidS2_cleaned$JOUR, format = "%d/%m/%Y")
 
 # Define vacation and school periods
-summer_vacation_start <- as.Date("2017-07-08")
-summer_vacation_end <- as.Date("2017-09-03")
-normal_period_start <- as.Date("2017-09-04")
-normal_period_end <- as.Date("2017-10-10")
+summer_vacation_start <- as.Date("2021-07-08")
+summer_vacation_end <- as.Date("2021-09-03")
+normal_period_start <- as.Date("2021-09-04")
+normal_period_end <- as.Date("2021-10-10")
 
 # Filter data for vacation and school periods
 summer_data <- filter(NbValidS2_cleaned, JOUR >= summer_vacation_start & JOUR <= summer_vacation_end)
@@ -428,15 +396,15 @@ ggplot(combined_counts, aes(x = CATEGORIE_TITRE, y = Validation_Counts, fill = P
 
 ```
 
--   **Effect of Summer Vacation on IMAGINE R Transport Ticket Validations in Two Semesters of 2017**
+-   **Effect of Summer Vacation on IMAGINE R Transport Ticket Validations in Two Semesters of 2021 after the strict lockdown**
 
-To assess the impact of summer vacation on the validation count of IMAGINE R transport tickets, we compared two periods within the second semester of 2017.
+To assess the impact of summer vacation on the validation count of IMAGINE R transport tickets, we compared two periods within the second semester of 2021.
 
-The first period encompassed the summer school break, starting from ("2017-07-08") to ("2017-09-03"). During this time, we found that the validation count for NAVIGO transport tickets was 144,403,148, while for IMAGINE R tickets, it was 24,600,169.
+The first period encompassed the summer school break, starting from ("2021-07-08") to ("2021-09-03"). During this time, we found that the validation count for NAVIGO transport tickets was 101089683 , while for IMAGINE R tickets, it was 24381950
 
-The second period represents the regular timeframe from ("2017-07-04") to ("2017-10-10"). Here, the validation count for NAVIGO tickets was 130,261,826, and for IMAGINE R tickets, it reached 31,434,154.
+The second period represents the regular timeframe from ("2021-07-04") to ("2021-10-10"). Here, the validation count for NAVIGO tickets was 92485334, and for IMAGINE R tickets, it reached 31424058.
 
-=\> The rate of increase in IMAGINE R ticket validations between Period 1 and Period 2 is approximately 27.78%., we observe a significant impact from the summer school break on the validation count.
+=\> The rate of progress in IMAGINE R ticket validations between Period 1 and Period 2 is approximately 28.87 %., we observe a significant impact from the summer school break on the validation count.
 
 \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
 
