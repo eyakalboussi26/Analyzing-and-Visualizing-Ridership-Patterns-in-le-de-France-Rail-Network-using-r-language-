@@ -1,7 +1,6 @@
 ---
-editor_name : Eya kalboussi
- Class : M2 ssio 
-    wrap: sentence
+Eya kalboussi , Miloudi Mohamed Zakaria
+M2 ssio 
 ---
 
 # Analyzing-and-Visualizing-Ridership-Patterns-in-le-de-France-Rail-Network-using-r-language-
