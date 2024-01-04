@@ -154,17 +154,17 @@ write.csv(lowiest_vald_S1, "lowiest_vald_S1.cvs", row.names = FALSE)
 NbValidS1_cleaned$NB_VALD <- as.numeric(as.character(NbValidS1_cleaned$NB_VALD))
 
 # Create a graph showing the distribution of ticket categories based on the number of validations
-Tick_typ_valids_dist_S1 <- ggplot(data = NbValidS1_cleaned, aes(x = CATEGORIE_TITRE, y = NB_VALD)) +
+Tick_typ_valids_dist_S1_2023 <- ggplot(data = NbValidS1_cleaned, aes(x = CATEGORIE_TITRE, y = NB_VALD)) +
   geom_bar(stat = "summary", fun = "sum", aes(fill = CATEGORIE_TITRE)) +
   labs(x = "Ticket Category", y = "Total Validations", title = "Distribution of Ticket Types by Validations") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 # Save the graph as an image file (e.g., ".png", ".jpg")
-ggsave("Tick_typ_valids_dist_S1.png", Tick_typ_valids_dist_S1, width = 10, height = 6, units = "in")
+ggsave("Tick_typ_valids_dist_S1_2023.png", Tick_typ_valids_dist_S1_2023, width = 10, height = 6, units = "in")
 
 # Display the graph
-print(Tick_typ_valids_dist_S1)
+print(Tick_typ_valids_dist_S1_2023)
 ```
 
 ### Conclusion:
@@ -177,6 +177,6 @@ print(Tick_typ_valids_dist_S1)
 
 -   The"17/01/2023 " is the day that had the highest number of validations, totaling 94766
 
--   Comparing 2022 and 2023, we see that the number of validations for transport tickets of type NAVIGO increased from xxxxx to 94766 .
+-   Comparing 2022 and 2023, we see that the number of validations for transport tickets of type NAVIGO increased from 87304 to 94766 .
 
-    =\> So, the progress rate or percentage increase between 2022 and 2023 for the number of validations of NAVIGO transport tickets is approximately xxxx%.
+    =\> So, the progress rate or percentage increase between 2022 and 2023 for the number of validations of NAVIGO transport tickets is approximately 8.55%.

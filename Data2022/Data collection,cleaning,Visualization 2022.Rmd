@@ -1,7 +1,7 @@
 ---
 title: 'Data collection,cleaning,Visualization 2022'
 author: "eya kalboussi"
-date: "2023-12-20"
+date: "2023-12-2022"
 output: html_document
 ---
 
@@ -286,7 +286,7 @@ print(Ticket_valD_dist_S2_2022)
 
 -   The Saint-Lazare station is served by regional trains, long-distance trains, and suburban lines, facilitating travel for both local and national passengers
 
--   Following Navigo, the transportation passes "Imagine r" and "TST"were also notable.Also We found that the stations "BOULOGNE-ST.CL"" and \
+-   Following Navigo, the transportation passes "Imagine r" and "TST"were also notable.Also We found that the stations "BOULOGNE-ST.CL"" and\
     \* CHARDON-LAGACH "" have the fewest validations, specifically fewer than 5 With transport ticket title is "Navigo Jour" at 01/07/2022.
 
 -   "29/11/2022" is the day that had the highest number of validations, totaling 87304

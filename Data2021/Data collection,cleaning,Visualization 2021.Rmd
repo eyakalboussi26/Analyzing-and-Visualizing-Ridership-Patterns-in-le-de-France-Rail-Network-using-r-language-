@@ -344,7 +344,7 @@ print(Ticket_Vald_Distrubution_S2_2023)
 
 ```
 
-#### 5. Comparison of Ticket Validation Counts between Summer Vacation and Normal School Periods  after the  strict lockdown in 2021
+#### 5. Comparison of Ticket Validation Counts between Summer Vacation and Normal School Periods after the strict lockdown in 2021
 
 ```{r}
 # Load necessary libraries

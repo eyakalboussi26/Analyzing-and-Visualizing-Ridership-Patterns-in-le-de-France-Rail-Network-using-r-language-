@@ -163,7 +163,7 @@ Tick_typ_valids_dist_S1 <- ggplot(data = NbValidS1_cleaned, aes(x = CATEGORIE_TI
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 # Save the graph as an image file (e.g., ".png", ".jpg")
-ggsave("Tick_typ_valids_dist_S1.png", Tick_typ_valids_dist_S1, width = 10, height = 6, units = "in")
+ggsave("Tick_typ_valids_dist_S1_2018.png", Tick_typ_valids_dist_S1, width = 10, height = 6, units = "in")
 
 # Display the graph
 print(Tick_typ_valids_dist_S1)
@@ -288,7 +288,7 @@ Tick_typ_valids_dist_S2<- ggplot(data = NbValidS2_cleaned, aes(x = CATEGORIE_TIT
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 # Save the graph as an image file (e.g., ".png", ".jpg")
-ggsave("Tick_typ_valids_dist_S2.png", Tick_typ_valids_dist_S2, width = 10, height = 6, units = "in")
+ggsave("Tick_typ_valids_dist_S2_2018.png", Tick_typ_valids_dist_S2, width = 10, height = 6, units = "in")
 
 # Display the graph
 print(Tick_typ_valids_dist_S2)
@@ -341,7 +341,7 @@ cat("Total validations for this date:", max_total, "\n")
 
 We found on 25/12/2018, which is Christmas Day, a slightly lower validation number compared to other days, 1454513, which confirms a lower validation rate. This suggests that people celebrate Christmas in their homes with their families and friends
 
-The date 2018-07-14 had the highest number of validations: 2749699. Additionally, we observed a significant number of validations on 14/07/2017, indicating higher public movement due to the celebration of the French National Day."
+The date 2018-07-14 had the highest number of validations: 2749699. Additionally, we observed a significant number of validations on 14/07/2018, indicating higher public movement due to the celebration of the French National Day."
 
 Our goal is to analyse and discuss the number of validations on different specific dates, outlining the observations and the reasoning behind the variations in validation counts.
 
@@ -390,7 +390,7 @@ ggsave("Validation Counts for Specific Dates in 2018.png", plot)
 
 ```
 
-#### 5. Comparison of Ticket Validation Counts between Summer Vacation and Normal School Periods in 2017
+#### 5. Comparison of Ticket Validation Counts between Summer Vacation and Normal School Periods in 2018
 
 ```{r}
 # Load necessary libraries

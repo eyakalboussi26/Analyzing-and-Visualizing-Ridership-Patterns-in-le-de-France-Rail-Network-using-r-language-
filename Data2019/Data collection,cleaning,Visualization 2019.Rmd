@@ -178,7 +178,7 @@ Tick_typ_valids_dist_S1 <- ggplot(data = NbValidS1_cleaned, aes(x = CATEGORIE_TI
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 # Save the graph as an image file (e.g., ".png", ".jpg")
-ggsave("Tick_typ_valids_dist_S1.png", Tick_typ_valids_dist_S1, width = 10, height = 6, units = "in")
+ggsave("Tick_typ_valids_dist_S1_2019.png", Tick_typ_valids_dist_S1, width = 10, height = 6, units = "in")
 
 # Display the graph
 print(Tick_typ_valids_dist_S1)
@@ -303,13 +303,13 @@ Tick_typ_valids_dist_S2<- ggplot(data = NbValidS2_cleaned, aes(x = CATEGORIE_TIT
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 # Save the graph as an image file (e.g., ".png", ".jpg")
-ggsave("Tick_typ_valids_dist_S2.png", Tick_typ_valids_dist_S2, width = 10, height = 6, units = "in")
+ggsave("Tick_typ_valids_dist_S2_2019.png", Tick_typ_valids_dist_S2, width = 10, height = 6, units = "in")
 
 # Display the graph
 print(Tick_typ_valids_dist_S2)
 ```
 
-#### 3. Spatiotemporal Analysis of Transport Ticket Validations during the Second Semester of 2017
+#### 3. Spatiotemporal Analysis of Transport Ticket Validations during the Second Semester of 2019
 
 -   During the second semester of 2019, starting in July and ending in december, our graphical analyses revealed that "NAVIGO" had the highest number of validations among all transportation passes 126202.
 
@@ -403,7 +403,7 @@ ggsave("Validation Counts for Specific Dates in 2019.png", plot)
 
 ```
 
-#### 5. Comparison of Ticket Validation Counts between Summer Vacation and Normal School Periods in 2017
+#### 5. Comparison of Ticket Validation Counts between Summer Vacation and Normal School Periods in 2019
 
 ```{r}
 # Load necessary libraries
