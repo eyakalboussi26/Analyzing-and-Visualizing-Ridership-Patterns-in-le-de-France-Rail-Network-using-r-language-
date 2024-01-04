@@ -12,7 +12,11 @@ In this project, we commence with the data collection phase, where the primary f
 
 1.  collection data
 
-Collecting data from Open Data Île-de-France . [The first dataset](https://data.iledefrance-mobilites.fr/explore/dataset/histo-validations-reseau-ferre/information/) is the his- torical validation data on the rail network spanning from 2017 to 2022. For each year, there are four files : --- Rail network validations : Number of validations per day for the frist semester (NbValidS1) ---Rail network validations: Hourly profiles per day type for the frist semester(ProfilFerS1) ---Surface network validations: Number of validations per day NbValidS2 --- Surface network validations: Hourly profiles per day type ProfilFerS2.
+Collecting data from Open Data Île-de-France . [The first dataset](https://data.iledefrance-mobilites.fr/explore/dataset/histo-validations-reseau-ferre/information/) is the historical validation data on the rail network spanning from 2017 to 2022. For each year, there are four files : 
+--- Rail network validations : Number of validations per day for the frist semester (NbValidS1) 
+---Rail network validations: Hourly profiles per day type for the frist semester(ProfilFerS1) 
+---Surface network validations: Number of validations per day NbValidS2 
+--- Surface network validations: Hourly profiles per day type ProfilFerS2.
 
 2.  Cleaning data:
 
