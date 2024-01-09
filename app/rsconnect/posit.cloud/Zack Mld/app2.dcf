@@ -1,0 +1,12 @@
+name: app2
+title: app
+username: Zack Mld
+account: Zack Mld
+server: posit.cloud
+hostUrl: https://api.posit.cloud/v1
+appId: 7332804
+bundleId: 8125728
+url: https://posit.cloud/content/7332804
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

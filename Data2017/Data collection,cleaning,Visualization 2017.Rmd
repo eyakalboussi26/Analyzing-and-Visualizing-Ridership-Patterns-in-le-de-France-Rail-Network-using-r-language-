@@ -76,6 +76,7 @@ print(NbValidS1_cleaned)
 # Remove rows with NA values in the 'NB_VALD' column
 NbValidS1_cleaned <- NbValidS1_cleaned[!is.na(NbValidS1_cleaned$NB_VALD), ]
 
+write.csv(NbValidS1_cleaned, "/cloud/project/Data2017/NbValidS1_cleaned", row.names=FALSE)
 
 ```
 
@@ -204,6 +205,7 @@ print(NbValidS2_cleaned)
 
 # Remove rows with NA values in the 'NB_VALD' column
 NbValidS2_cleaned <- NbValidS2_cleaned[!is.na(NbValidS2_cleaned$NB_VALD), ]
+write.csv(NbValidS2_cleaned,"/cloud/project/Data2017/NbValidS2_cleaned", row.names=FALSE)
 
 
 ```
@@ -450,7 +452,7 @@ cat("Number of rows with specific or missing values before removal:", length(row
 
 # Remove rows with specific or missing values
 ProfilFerS1_cleaned <- ProfilFerS1[-rows_to_remove, ]
-
+write.csv(ProfilFerS1_cleaned,"/cloud/project/Data2017/ProfilFerS1_cleaned")
 # Display the dimensions of the new dataset after cleaning
 cat("Dimensions of the dataset after cleaning:", dim(ProfilFerS1_cleaned), "\n")
 
