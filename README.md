@@ -1,6 +1,5 @@
 ---
-Eya kalboussi , Miloudi Mohamed Zakaria
-M2 ssio 
+
 ---
 
 # Analyzing-and-Visualizing-Ridership-Patterns-in-le-de-France-Rail-Network-using-r-language-
